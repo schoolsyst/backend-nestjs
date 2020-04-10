@@ -1,3 +1,112 @@
+# schoolsyst's API
+
+## Authentification
+All routes require a JWT token to access (except `/auth/` routes)
+
+To access routes, first [obtain your token](#routes-auth), then, pass it in the `Authorization` header using the format `Bearer <your token>`.
+
+## Common objects
+Some objects are reused in a number of routes. Their properties are listed here.
+
+### Subject
+Represents a subject of the user.
+
+|Property|Type|Constraints|Description|
+|--------|----|-----------|-----------|
+| name | string | max length: 100<br>required. | The subject's display name.
+| slug | slug | max length: 100<br>must be unique to the user. | Derived from the `name`, contains only alphanumerical characters and the dash "-". Case insensitive.
+| 
+
+## Routes
+
+### POST /auth/
+> Obtain a JWT token, given a email and a password.
+
+Provide the `email` and `password` in the request's body as such:
+
+```json
+{
+  "email": "<your email>",
+  "password": "<your password>"
+}
+```
+
+The response will be of the following form:
+
+```json
+{
+  "access": "<your access token>",
+  "refresh": "<your refresh token>"
+}
+```
+
+### POST /auth/refresh/
+> Renew your access token provided the refresh token
+
+Given the refresh token: 
+```json
+{
+  "refresh": "<your refresh token>"
+}
+```
+
+The response will contain the new access token:
+
+```json
+{
+  "access": "<your new access token>",
+}
+```
+
+
+
+### GET /users/self/
+
+> Information about the current user (the one authentificated by the access token)
+
+The response will contain: 
+
+- `email` - unique (case insensitive)
+- `activated` - Whether or not the user has confirmed his email address.
+
+### POST /users/
+
+> Create an account.
+
+The request must contain:
+
+- email
+- password
+
+Upon registration, the API...
+1. creates a new unique activation token and saves it on `<the user>.activation_token`
+2. sends a confirmation email to `email`, this email contains a button that links to `https://api.schoolsyst.com/users/activate/?token=<the verify token>&email=<the email address>`
+
+### POST /users/activate
+
+Query parameters:
+
+| Name | Type | Constraints | Description
+|---|---|---|---|
+| email | email address | Exists in the database | 
+| token | string | Exists in the database | Stored as a property named `activation_token` on each user. Destroyed 24 hours after creation.
+
+---
+
+Routes beyond this point require the user to have its activation state (`activated` property) set to `true`. Otherwise a `401 Unauthorized` response will be sent.
+
+---
+
+### /settings/
+
+Settings of the user.
+
+| Name | Type | Constraints | Default value | Description
+|---|---|---|---|---|
+| theme | One of 'light', 'dark' or 'auto' | 'auto'
+| 
+
+------------------------------
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
 </p>
