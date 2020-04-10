@@ -11,7 +11,7 @@ async function bootstrap() {
 
   const port = serverConfig.port;
   await app.listen(port);
-  logger.log(`GT - Hosting API listening on port ${port}`);
+  logger.log(`SchoolSyst API listening on port ${port}`);
 
 }
 bootstrap();
