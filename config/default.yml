@@ -1,0 +1,15 @@
+server:
+    port: 3000
+
+db:
+    type: 'postgres'
+    port: 5432
+    database: 'schoolsyst'
+    host: 'localhost'
+    username: 'postgres'
+    password: 'root'
+    synchronize: true
+
+jwt:
+    expiresIn: 3600
+    secret: 'npa7EJmjcyAhiE4af69jiJyttekN'
